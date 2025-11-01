@@ -1,11 +1,10 @@
-version: '3'
-
 services:
   tbwebserver:
-    # Use NGINX with ACME module support
-    # Option 1: Build custom image with ACME module (recommended)
-    # Option 2: Use official NGINX with ACME dynamic module
-    image: nginx:latest  # Will need to install ACME module
+    # Build custom NGINX image with ACME module
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nginx-acme:latest
     expose:
       - "80"
       - "443"
@@ -17,9 +16,6 @@ services:
       # Optional: Keep certbot volumes for migration period
       - ./certbot/conf/:/etc/nginx/ssl/:ro
     network_mode: "host"
-    # ACME module requires these capabilities
-    cap_add:
-      - NET_ADMIN
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
