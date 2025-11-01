@@ -5,9 +5,11 @@ services:
       context: .
       dockerfile: Dockerfile
     image: nginx-acme:latest
-    expose:
-      - "80"
-      - "443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "1883:1883"
+      - "31893:31893"
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -15,7 +17,11 @@ services:
       - ./nginx/acme-cache:/var/cache/nginx/acme-letsencrypt:rw
       # Optional: Keep certbot volumes for migration period
       - ./certbot/conf/:/etc/nginx/ssl/:ro
-    network_mode: "host"
+    # Use bridge network instead of host mode for better networking
+    # network_mode: "host"  # Disabled - causing network connectivity issues
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s

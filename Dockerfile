@@ -6,7 +6,12 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     lsb-release \
     ca-certificates \
+    iputils-ping \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
+
+# Update CA certificates
+RUN update-ca-certificates
 
 # Add NGINX repository signing key
 RUN curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
